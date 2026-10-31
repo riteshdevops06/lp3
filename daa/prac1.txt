@@ -1,0 +1,74 @@
+
+# Fibonacci Recursive
+def fibo_recur(num):
+    if num == 1:
+        return 1
+    elif num == 0:
+        return 0
+    else:
+        return fibo_recur(num - 1) + fibo_recur(num - 2)
+
+
+# Fibonacci Non-Recursive
+def fibo(num):
+    a = 0
+    b = 1
+
+    print(a, b, end=" ")
+
+    for i in range(2, num):
+        c = a + b
+        print(c, end=" ")
+        a = b
+        b = c
+
+
+# Tower of Hanoi
+def TowerOfHanoi(n, source, destination, auxiliary):
+    if n == 1:
+        print("Move disc 1 from", source, "to", destination)
+        return
+
+    TowerOfHanoi(n - 1, source, auxiliary, destination)
+
+    print("Move disc", n, "from", source, "to", destination)
+
+    TowerOfHanoi(n - 1, auxiliary, destination, source)
+
+
+# Main Program
+print("Enter the appropriate choice:")
+print("1. Fibonacci")
+print("2. Tower of Hanoi")
+
+choice = int(input())
+
+if choice == 1:
+
+    print("Enter the appropriate choice:")
+    print("1. Recursive")
+    print("2. Non-Recursive")
+
+    flag = int(input())
+
+    if flag == 1:
+        n = int(input("Enter the number of terms: "))
+
+        for i in range(n):
+            print(fibo_recur(i), end=" ")
+
+    elif flag == 2:
+        n = int(input("Enter the number of terms: "))
+        fibo(n)
+
+    else:
+        print("Invalid choice!")
+
+elif choice == 2:
+
+    n = int(input("Enter the number of discs "))
+
+    TowerOfHanoi(n, 'A', 'B', 'C')
+
+else:
+    print("Invalid choice!")
