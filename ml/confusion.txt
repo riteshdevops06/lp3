@@ -1,0 +1,102 @@
+Perfect — let’s restate everything in **technical terms**, as you’d write in an ML report or interview answer 👇
+
+---
+
+## 🔹 **1. Confusion Matrix**
+
+A **confusion matrix** is a tabular representation of a classifier’s performance, showing the counts of correct and incorrect predictions for each class.
+
+For binary classification:
+
+|                     | **Predicted Positive**  | **Predicted Negative**  |
+| ------------------- | ----------------------- | ----------------------- |
+| **Actual Positive** | **TP (True Positive)**  | **FN (False Negative)** |
+| **Actual Negative** | **FP (False Positive)** | **TN (True Negative)**  |
+
+---
+
+## 🔹 **2. Precision**
+
+**Definition:**
+Precision measures the proportion of correctly predicted positive instances out of all instances predicted as positive.
+
+[
+\text{Precision} = \frac{TP}{TP + FP}
+]
+
+**Interpretation:**
+High precision indicates that the classifier makes **few false positive** errors.
+It evaluates the **exactness** or **quality** of positive predictions.
+
+**Example:** Used in spam detection to ensure legitimate emails aren’t incorrectly labeled as spam.
+
+---
+
+## 🔹 **3. Recall (Sensitivity / True Positive Rate)**
+
+**Definition:**
+Recall measures the proportion of correctly predicted positive instances out of all actual positive instances.
+
+[
+\text{Recall} = \frac{TP}{TP + FN}
+]
+
+**Interpretation:**
+High recall indicates that the classifier correctly identifies **most of the positive samples**, minimizing false negatives.
+It evaluates the **completeness** of the classifier.
+
+**Example:** Used in medical diagnosis where missing a positive case (false negative) is costly.
+
+---
+
+## 🔹 **4. F1-Score**
+
+**Definition:**
+The **F1-Score** is the harmonic mean of Precision and Recall, providing a single metric that balances both.
+
+[
+\text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+]
+
+**Interpretation:**
+The F1-Score is useful when the class distribution is **imbalanced**, or when both false positives and false negatives are important.
+
+---
+
+## 🔹 **5. Accuracy**
+
+**Definition:**
+Accuracy measures the overall proportion of correctly classified instances.
+
+[
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+]
+
+**Limitation:**
+Accuracy can be **misleading for imbalanced datasets**, as it may be high even when the model performs poorly on the minority class.
+
+---
+
+## 🔹 **6. Relationships & Trade-offs**
+
+* **Precision vs Recall Trade-off:**
+  Increasing precision usually decreases recall, and vice versa.
+  Adjusting the **decision threshold** (e.g., in logistic regression) controls this trade-off.
+
+* **F1-Score:**
+  Optimal when you need to find a balance between precision and recall.
+
+---
+
+## 🔹 **7. Summary Table**
+
+| Metric        | Formula                   | Focus               | Sensitive to    |
+| ------------- | ------------------------- | ------------------- | --------------- |
+| **Precision** | TP / (TP + FP)            | Exactness           | False Positives |
+| **Recall**    | TP / (TP + FN)            | Completeness        | False Negatives |
+| **F1-Score**  | 2 × (P×R)/(P+R)           | Balance             | Both FP & FN    |
+| **Accuracy**  | (TP + TN) / (TP+TN+FP+FN) | Overall correctness | Class imbalance |
+
+---
+
+Would you like me to include **ROC, AUC, and specificity** next? They’re the next level metrics derived from the same confusion matrix.

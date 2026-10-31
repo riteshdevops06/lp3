@@ -1,0 +1,1334 @@
+Sure 👍 Let’s break your **`knapsack`** function step-by-step in simple words —
+
+---
+
+### 🧭 Goal of the Function
+
+This function solves the **0/1 Knapsack Problem** using **Dynamic Programming**.
+
+You are trying to:
+
+* **Maximize total value**
+* Without **exceeding the bag’s weight capacity**
+
+Each item has:
+
+* A `weight`
+* A `value`
+
+You can either **take** or **skip** each item (no fractions).
+
+---
+
+### 📦 Inputs
+
+```python
+def knapsack(capacity, items)
+```
+
+* `capacity`: total weight your bag can carry.
+* `items`: a list of objects (each has `.weight` and `.value`).
+
+Example:
+
+```python
+items = [
+    Item(weight=2, value=3),
+    Item(weight=3, value=4),
+    Item(weight=4, value=5)
+]
+```
+
+---
+
+### ⚙ Step 1: Create DP Table
+
+```python
+dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+```
+
+* `n = len(items)` → number of items.
+* `dp[i][w]` will store the **maximum value** we can get using the first `i` items and bag capacity `w`.
+
+So, `dp` is a table with:
+
+* Rows = number of items + 1
+* Columns = capacity + 1
+
+Initially, it’s filled with `0`.
+
+---
+
+### ⚙ Step 2: Fill the DP Table
+
+```python
+for i in range(1, n + 1):
+    for w in range(1, capacity + 1):
+```
+
+Loop through each item and each possible bag weight.
+
+Now check if we can include the current item:
+
+#### ✅ If the item can fit:
+
+```python
+if items[i-1].weight <= w:
+    dp[i][w] = max(
+        dp[i-1][w],  # Case 1: Don’t take item
+        items[i-1].value + dp[i-1][w - items[i-1].weight]  # Case 2: Take item
+    )
+```
+
+We choose the better (maximum) of:
+
+* Not taking the item, or
+* Taking it and adding its value + value from remaining capacity.
+
+#### ❌ If it can’t fit:
+
+```python
+else:
+    dp[i][w] = dp[i-1][w]
+```
+
+We just skip the item.
+
+---
+
+### 🧮 Step 3: Show DP Table (optional)
+
+```python
+print_dp(dp)
+```
+
+This line just prints the DP matrix (to see how it’s filled).
+
+---
+
+### 🧳 Step 4: Find Which Items Were Chosen
+
+Now we go **backwards** through the DP table to see which items are included in the optimal solution.
+
+```python
+result = dp[n][capacity]
+w = capacity
+```
+
+Then:
+
+```python
+for i in range(n, 0, -1):
+    if result == dp[i-1][w]:
+        continue  # Item not taken
+    else:
+        print(f"Item(weight={items[i - 1].weight}, value={items[i - 1].value})")
+        result -= items[i-1].value
+        w -= items[i-1].weight
+```
+
+If the value changes when moving up a row (`dp[i][w] != dp[i-1][w]`),
+it means that item **was used**.
+
+We then reduce:
+
+* `result` by that item’s value
+* `w` by that item’s weight
+
+---
+
+### 🎯 Step 5: Return the Maximum Value
+
+```python
+return dp[n][capacity]
+```
+
+This gives the **maximum total value** that fits in the knapsack.
+
+---
+
+### 🧩 Simple Example
+
+Suppose:
+
+```python
+capacity = 5
+items = [
+    Item(weight=2, value=3),
+    Item(weight=3, value=4),
+    Item(weight=4, value=5)
+]
+```
+
+Then output will show:
+
+```
+Item(weight=2, value=3)
+Item(weight=3, value=4)
+```
+
+And it returns → **7**
+
+---
+
+Would you like me to draw the **DP table diagram** step-by-step for a small example (like above)? It helps visualize how the values fill up.
+
+
+
+
+
+
+
+
+
+
+Perfect 👍 Let’s **dry run** your `knapsack()` function step by step with a small example so you can clearly *see* how it works.
+
+---
+
+### 🧩 Example
+
+```python
+capacity = 5
+items = [
+    Item(weight=2, value=3),
+    Item(weight=3, value=4),
+    Item(weight=4, value=5)
+]
+```
+
+So:
+
+* Bag capacity = **5**
+* We have **3 items**
+
+| Item | Weight | Value |
+| ---- | ------ | ----- |
+| 1    | 2      | 3     |
+| 2    | 3      | 4     |
+| 3    | 4      | 5     |
+
+---
+
+### Step 1️⃣: Create DP Table
+
+`dp` has `(n+1)` rows and `(capacity+1)` columns → `4 x 6`
+Initial `dp` filled with 0:
+
+| i\w | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | - | - | - | - | - | - |
+| 0   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 2   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3   | 0 | 0 | 0 | 0 | 0 | 0 |
+
+---
+
+### Step 2️⃣: Fill the Table
+
+#### 👉 i = 1 → Item(weight=2, value=3)
+
+We fill `dp[1][w]` for w = 1 to 5:
+
+* w=1 → can’t take (2>1) → dp[1][1] = 0
+* w=2 → can take → max(0, 3+dp[0][0]=3) → dp[1][2]=3
+* w=3 → max(0, 3+dp[0][1]=3) → 3
+* w=4 → 3
+* w=5 → 3
+
+✅ After item 1:
+
+| i\w | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | - | - | - | - | - | - |
+| 0   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1   | 0 | 0 | 3 | 3 | 3 | 3 |
+| 2   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 3   | 0 | 0 | 0 | 0 | 0 | 0 |
+
+---
+
+#### 👉 i = 2 → Item(weight=3, value=4)
+
+Now compute dp[2][w]:
+
+* w=1 → can’t take (3>1) → dp[2][1] = 0
+* w=2 → can’t take → 3>2 → dp[2][2]=dp[1][2]=3
+* w=3 → can take → max(dp[1][3]=3, 4+dp[1][0]=4) → 4
+* w=4 → can take → max(dp[1][4]=3, 4+dp[1][1]=4) → 4
+* w=5 → can take → max(dp[1][5]=3, 4+dp[1][2]=7) → **7**
+
+✅ After item 2:
+
+| i\w | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | - | - | - | - | - | - |
+| 0   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1   | 0 | 0 | 3 | 3 | 3 | 3 |
+| 2   | 0 | 0 | 3 | 4 | 4 | 7 |
+| 3   | 0 | 0 | 0 | 0 | 0 | 0 |
+
+---
+
+#### 👉 i = 3 → Item(weight=4, value=5)
+
+* w=1 → can’t take → 0
+* w=2 → can’t take → 3
+* w=3 → can’t take → 4
+* w=4 → can take → max(dp[2][4]=4, 5+dp[2][0]=5) → 5
+* w=5 → can take → max(dp[2][5]=7, 5+dp[2][1]=5) → **7**
+
+✅ Final DP Table:
+
+| i\w | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | - | - | - | - | - | - |
+| 0   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1   | 0 | 0 | 3 | 3 | 3 | 3 |
+| 2   | 0 | 0 | 3 | 4 | 4 | 7 |
+| 3   | 0 | 0 | 3 | 4 | 5 | 7 |
+
+---
+
+### Step 3️⃣: Backtrack — Which Items Were Taken?
+
+Start from bottom-right:
+`result = dp[3][5] = 7`, `w = 5`
+
+---
+
+**i = 3:**
+`result == dp[2][5] (7 == 7)` → not taken
+(move up)
+
+**i = 2:**
+`result != dp[1][5] (7 != 3)` → taken
+✅ Item 2 (weight=3, value=4)
+
+Update:
+
+```
+result = 7 - 4 = 3
+w = 5 - 3 = 2
+```
+
+**i = 1:**
+`result != dp[0][2] (3 != 0)` → taken
+✅ Item 1 (weight=2, value=3)
+
+---
+
+✅ Selected items:
+
+* Item 1: (W=2, V=3)
+* Item 2: (W=3, V=4)
+
+Total value = 7
+Total weight = 5
+
+---
+
+### 🏁 Final Output
+
+```
+Item(weight=3, value=4)
+Item(weight=2, value=3)
+```
+
+Return value:
+
+```python
+7
+```
+
+---
+
+Would you like me to show how this looks visually as a **DP grid diagram** (colored table showing decisions “take” / “skip”)? It makes understanding even clearer.
+
+
+
+
+Excellent question, Rohan 👏
+Let’s unpack this very clearly —
+
+You asked:
+
+> “Why this `dp[0][0]` only?”
+
+So here’s the **simple and intuitive explanation** 👇
+
+---
+
+### 🧠 What `dp[i][w]` means
+
+`dp[i][w]` = **maximum value we can get using first `i` items**
+with a **bag capacity of `w`**.
+
+---
+
+### 🧩 Then what is `dp[0][0]`?
+
+`dp[0][0]` means:
+
+* Using **0 items**,
+* With **bag capacity 0**.
+
+→ You have nothing to put in the bag,
+→ So total value = **0**.
+
+Hence:
+
+```
+dp[0][0] = 0
+```
+
+---
+
+### 📜 Actually, the whole first row and first column are “base cases”
+
+#### 🧱 Base Case 1: `i = 0` (no items)
+
+If you have **no items** to choose from,
+then no matter what the capacity is,
+you can’t get any value.
+
+👉 So `dp[0][w] = 0` for all `w`.
+
+#### 🧱 Base Case 2: `w = 0` (zero capacity)
+
+If your bag has **0 capacity**,
+you can’t carry anything, even if you have many items.
+
+👉 So `dp[i][0] = 0` for all `i`.
+
+---
+
+### 🧩 Visual example
+
+Let’s say capacity = 5, items = 3
+Then DP table (before filling) looks like this:
+
+| i\w | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | - | - | - | - | - | - |
+| 0   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1   | 0 |   |   |   |   |   |
+| 2   | 0 |   |   |   |   |   |
+| 3   | 0 |   |   |   |   |   |
+
+See how:
+
+* The **first row (i=0)** is all zeros.
+* The **first column (w=0)** is all zeros.
+
+Because with no items or zero capacity,
+the **best total value = 0**.
+
+---
+
+### 🧩 Why do we need this?
+
+Because in dynamic programming,
+you **build up** from smaller subproblems.
+
+So `dp[0][0]` and other zeros are the **starting base** from which the algorithm fills in the rest of the table.
+
+For example:
+
+```
+dp[1][2] = max(dp[0][2], item_value + dp[0][0])
+```
+
+Notice how `dp[0][0]` is needed in this formula —
+that’s how we get the first value in the table.
+
+---
+
+### 🔑 In short:
+
+| Case       | Meaning              | Value |
+| ---------- | -------------------- | ----- |
+| `dp[0][0]` | No items, 0 capacity | 0     |
+| `dp[0][w]` | No items             | 0     |
+| `dp[i][0]` | 0 capacity           | 0     |
+
+They form the **foundation** (base case) of your DP solution.
+
+---
+
+Would you like me to show you how the **table gets filled starting from dp[0][0]** line by line (like how each cell depends on earlier cells)? It’ll make the role of `dp[0][0]` crystal clear.
+
+
+
+
+Excellent — this is the *most important* line in the knapsack algorithm 💡
+
+You’re asking:
+
+> Why did we decide to use
+> `items[i-1].value + dp[i-1][w - items[i-1].weight]` ?
+
+Let’s break this down very simply 👇
+
+---
+
+## 🧠 Step 1: What is the problem?
+
+You have:
+
+* A bag with limited **capacity (`w`)**
+* Some **items**, each with:
+
+  * a `weight`
+  * a `value`
+
+You want the **maximum total value** possible.
+
+At each step (for each item), you have **2 choices**:
+
+1. **Don’t take** the item
+2. **Take** the item (if it fits)
+
+---
+
+## ⚙️ Step 2: The DP definition
+
+`dp[i][w]` = the **maximum value** you can achieve
+using the **first `i` items**
+and a **bag capacity of `w`**
+
+---
+
+## 🧩 Step 3: Two choices — take or not take
+
+When you are deciding about the **i-th item**,
+you look at its:
+
+* weight → `items[i-1].weight`
+* value → `items[i-1].value`
+
+(because list indices start from 0)
+
+---
+
+### 🧱 Case 1: **Don’t take it**
+
+If you skip this item,
+the best value remains same as before this item:
+
+```
+dp[i-1][w]
+```
+
+That means: best value with previous `i-1` items and same capacity.
+
+---
+
+### 🧱 Case 2: **Take it**
+
+If you take the item, then:
+
+* You **gain** its `value`
+* But you **use up** some space (`weight`)
+
+So now you have:
+
+* `w - items[i-1].weight` capacity left
+* Only `i-1` previous items to consider
+
+So the total value becomes:
+
+```
+items[i-1].value + dp[i-1][w - items[i-1].weight]
+```
+
+This means:
+
+> "Value of this item" + "Best value you can get from the remaining capacity"
+
+---
+
+### 🧮 Step 4: Choose the better of both
+
+You take the **maximum** of both cases:
+
+```python
+dp[i][w] = max(
+    dp[i-1][w],  # not taking it
+    items[i-1].value + dp[i-1][w - items[i-1].weight]  # taking it
+)
+```
+
+That’s the **heart** of the knapsack logic 💖
+
+---
+
+## 🧩 Example
+
+Suppose you’re at:
+
+* Item = (weight=3, value=4)
+* Bag capacity = 5
+
+Then:
+
+* If you **don’t take it** → value = `dp[i-1][5]`
+* If you **do take it** →
+
+  * you gain 4 value
+  * and have 2 weight left → value = `4 + dp[i-1][2]`
+
+Now choose the better:
+
+```python
+dp[i][5] = max(dp[i-1][5], 4 + dp[i-1][2])
+```
+
+---
+
+## 🧩 Why `i-1`?
+
+Because:
+
+* You are processing the **i-th** item,
+* But in Python lists, indexing starts from **0**,
+  so the item’s index = `i-1`.
+
+Also, `dp[i-1][...]` means:
+
+> you are using the **previous row** (previous items)
+> since we build up row by row.
+
+---
+
+### 🧩 Final formula meaning
+
+| Term                             | Meaning                                           |
+| -------------------------------- | ------------------------------------------------- |
+| `dp[i-1][w]`                     | Value if you skip the item                        |
+| `items[i-1].value`               | Value you gain if you take the item               |
+| `dp[i-1][w - items[i-1].weight]` | Best value that can fit in the remaining capacity |
+| `max(...)`                       | Choose whichever gives more total value           |
+
+---
+
+### 🎯 In one line:
+
+👉 **“If you take the item, you gain its value but lose capacity.
+So add its value to the best value that fits in the remaining space.”**
+
+---
+
+Would you like me to visualize this with a **small example grid** showing both “take” and “skip” values side by side for one cell (e.g. how `dp[2][5]` = 7)?
+
+
+
+
+
+
+
+
+
+
+
+
+Perfect 👏 — this is the **core logic** of the **0/1 Knapsack problem**.
+
+Let’s go **step-by-step** in very simple language so you’ll never forget it again 👇
+
+---
+
+## 🧠 Step 1: The real-world situation
+
+Imagine you have:
+
+* A bag with **limited capacity (weight)**
+* Some **items**, each with a **weight** and a **value**
+
+You can either **take** an item (1) or **leave** it (0).
+That’s why it’s called **0/1 knapsack**.
+
+Your goal:
+🎯 **Get the highest total value possible** without exceeding capacity.
+
+---
+
+## ⚙️ Step 2: The two choices for every item
+
+When you look at each item, you have **two possible actions:**
+
+### 1️⃣ **Don’t take the item**
+
+* You ignore this item completely.
+* Your remaining capacity stays the same.
+* The total value stays as whatever you had from **previous items**.
+
+→ Value = `dp[i-1][w]`
+
+---
+
+### 2️⃣ **Take the item (if it fits)**
+
+* You add its **value** to your bag.
+* But you also use up some **weight capacity** equal to its weight.
+* So now, you can only use the **remaining capacity**.
+
+→ Value = `items[i-1].value + dp[i-1][w - items[i-1].weight]`
+
+Here:
+
+* `items[i-1].value` = the value you get by adding the current item
+* `dp[i-1][w - items[i-1].weight]` = the **best** value you can still get from remaining space (after putting this item)
+
+---
+
+## 🧩 Step 3: The logic — choose what gives more value
+
+Now you simply **compare both choices**:
+
+```python
+dp[i][w] = max(
+    dp[i-1][w],  # if you don’t take it
+    items[i-1].value + dp[i-1][w - items[i-1].weight]  # if you take it
+)
+```
+
+This means:
+
+> “Out of taking it or skipping it —
+> choose the one that gives you **maximum total value**.”
+
+---
+
+## 🧮 Step 4: Example to see the logic clearly
+
+Let’s take a simple example:
+
+| Item | Weight | Value |
+| ---- | ------ | ----- |
+| 1    | 2      | 3     |
+| 2    | 3      | 4     |
+
+Bag capacity = 5
+
+---
+
+### When we reach **item 2** (weight 3, value 4):
+
+We’re calculating `dp[2][5]` —
+→ meaning: using first 2 items, with capacity 5.
+
+Now two choices:
+
+#### 🚫 Don’t take item 2
+
+Then we just use item 1 if possible →
+`dp[1][5] = 3`
+
+#### ✅ Take item 2
+
+Then:
+
+* Add value = 4
+* Remaining capacity = 5 - 3 = 2
+* What’s the best we can do with capacity 2 and only item 1? → `dp[1][2] = 3`
+
+Total = `4 + 3 = 7`
+
+Now take the **max**:
+
+```
+max(3, 7) = 7
+```
+
+✅ So we take the item, because it gives better total value.
+
+---
+
+## 💡 Step 5: The idea behind this logic
+
+This logic is like saying:
+
+> “For every item, I’ll make the best local choice —
+> either skip it or include it —
+> and I’ll use previous results to avoid recalculating.”
+
+That’s **dynamic programming** —
+we **build on previously solved smaller subproblems**.
+
+---
+
+### 🔁 Recap table
+
+| Action        | What it means                         | Formula                                             | When used         |
+| ------------- | ------------------------------------- | --------------------------------------------------- | ----------------- |
+| Skip item     | Don’t include current item            | `dp[i-1][w]`                                        | Always possible   |
+| Take item     | Include item, reduce capacity         | `items[i-1].value + dp[i-1][w - items[i-1].weight]` | Only if item fits |
+| Choose better | Pick whichever gives more total value | `max(...)`                                          | Every time        |
+
+---
+
+Would you like me to show a **visual diagram** of this decision (like a small decision tree where you see “take / don’t take” paths and resulting values)?
+It’ll make this logic super clear visually.
+
+
+
+
+
+
+
+
+
+Perfect 👏 Rohan — you’ve already understood how we **fill** the DP table.
+
+Now let’s understand this **last part** — the **backtracking step**, which is equally important.
+
+We’ll go through your code line by line 👇
+
+---
+
+## 🧩 Code block:
+
+```python
+for i in range(n, 0, -1):
+    if result == dp[i-1][w]:
+        continue
+    else:
+        print(f"Item(weight={items[i - 1].weight}, value={items[i - 1].value})")
+        result -= items[i-1].value
+        w -= items[i-1].weight
+return dp[n][capacity]
+```
+
+---
+
+## 🎯 Purpose:
+
+This part is used to **find which items were actually chosen**
+to make up the **maximum value** found in the DP table.
+
+---
+
+## 🧠 What we already know
+
+At the end of DP filling:
+
+* `dp[n][capacity]` = the **maximum total value** we can achieve.
+
+Now we want to know:
+**Which exact items** gave us this maximum value?
+
+That’s what this loop does.
+
+---
+
+## 🧮 Let’s understand each line:
+
+---
+
+### ✅ `for i in range(n, 0, -1):`
+
+We go **backward** —
+from the **last item (n)** to the **first (1)**.
+
+Because we filled the table from top to bottom,
+now we trace **backward** to find which items were used.
+
+---
+
+### ✅ `if result == dp[i-1][w]:`
+
+Here:
+
+* `result` = current remaining total value we still need to account for.
+* `dp[i-1][w]` = value if we **didn’t take** the current item.
+
+So this line means:
+
+> If the current total value is the same as the previous row’s value (same capacity),
+> it means this item **was not taken**.
+
+👉 **Skip it** and go to the previous item.
+
+---
+
+### ✅ `else:`  (means item *was taken*)
+
+If the value **changes**, that means we got a **higher value** by including this item.
+So, this item **was included** in the final solution.
+
+---
+
+### ✅ Inside else block
+
+```python
+print(f"Item(weight={items[i - 1].weight}, value={items[i - 1].value})")
+```
+
+We print this item because it was **part of the optimal set**.
+
+Then we **update** the remaining totals:
+
+```python
+result -= items[i-1].value
+w -= items[i-1].weight
+```
+
+Why?
+Because we’ve already “used” this item:
+
+* Its **value** has been accounted for.
+* Its **weight** has filled part of the bag.
+
+Now we continue backtracking for the **remaining capacity**.
+
+---
+
+### ✅ `return dp[n][capacity]`
+
+Finally, we return the **maximum total value**.
+
+The printed items are the ones that were **chosen** in that optimal combination.
+
+---
+
+## 🧩 Example to visualize
+
+Take our earlier example:
+
+| Item | Weight | Value |
+| ---- | ------ | ----- |
+| 1    | 2      | 3     |
+| 2    | 3      | 4     |
+| 3    | 4      | 5     |
+
+Capacity = 5
+Final DP value → `dp[3][5] = 7`
+
+---
+
+Now:
+
+```python
+result = 7
+w = 5
+```
+
+We loop backwards:
+
+| i | result | w | dp[i-1][w] | Decision  | What happens                    |
+| - | ------ | - | ---------- | --------- | ------------------------------- |
+| 3 | 7      | 5 | dp[2][5]=7 | equal     | skip item 3                     |
+| 2 | 7      | 5 | dp[1][5]=3 | not equal | take item 2 (weight=3, value=4) |
+| 1 | 3      | 2 | dp[0][2]=0 | not equal | take item 1 (weight=2, value=3) |
+
+✅ Chosen items:
+
+* Item 2 (w=3, v=4)
+* Item 1 (w=2, v=3)
+
+Total value = 7
+
+---
+
+## 🧠 In short
+
+| Line                         | Meaning                                 |
+| ---------------------------- | --------------------------------------- |
+| `for i in range(n, 0, -1)`   | Go backward from last item              |
+| `if result == dp[i-1][w]`    | Item not taken                          |
+| `else:`                      | Item was taken                          |
+| `result -= items[i-1].value` | Subtract its value from remaining total |
+| `w -= items[i-1].weight`     | Reduce capacity since item used space   |
+| `return dp[n][capacity]`     | Return max possible value               |
+
+---
+
+### 🔁 Simple summary:
+
+> “We start from the final answer and go backward through the DP table,
+> checking whether each item was included in the optimal solution or not.”
+
+---
+
+Would you like me to draw a small **step-by-step trace table** showing how `result` and `w` change in this backtracking loop? It’ll make the “item taken or skipped” logic visually clear.
+
+
+
+
+
+
+
+
+Perfect 🔥 Rohan — let’s **dry run the backtracking part** step-by-step so you can *see exactly* how it finds which items were chosen.
+
+We’ll continue using the **same knapsack example** that we already filled DP table for 👇
+
+---
+
+## 🧩 Example Recap
+
+### Inputs
+
+| Item | Weight | Value |
+| ---- | ------ | ----- |
+| 1    | 2      | 3     |
+| 2    | 3      | 4     |
+| 3    | 4      | 5     |
+
+`capacity = 5`
+
+---
+
+## ✅ Final DP Table (from earlier)
+
+| i\w | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | - | - | - | - | - | - |
+| 0   | 0 | 0 | 0 | 0 | 0 | 0 |
+| 1   | 0 | 0 | 3 | 3 | 3 | 3 |
+| 2   | 0 | 0 | 3 | 4 | 4 | 7 |
+| 3   | 0 | 0 | 3 | 4 | 5 | 7 |
+
+So:
+`dp[3][5] = 7` → **maximum value**
+
+---
+
+## 🧮 Backtracking Code
+
+```python
+result = dp[n][capacity]  # result = 7
+w = capacity               # w = 5
+
+for i in range(n, 0, -1):  # i = 3, 2, 1
+    if result == dp[i-1][w]:
+        continue
+    else:
+        print(f"Item(weight={items[i-1].weight}, value={items[i-1].value})")
+        result -= items[i-1].value
+        w -= items[i-1].weight
+```
+
+Now let’s dry run this **line by line** 👇
+
+---
+
+## 🔁 Step-by-step Backtracking
+
+### Step 1️⃣ → i = 3
+
+Current item → `weight=4, value=5`
+
+* result = 7
+* w = 5
+
+Check condition:
+
+```
+dp[i-1][w] = dp[2][5] = 7
+```
+
+Compare:
+
+```
+result == dp[2][5]  → 7 == 7 ✅ True
+```
+
+➡️ Means: even **without item 3**, we still got the same best value (7).
+So item 3 **was not used**.
+
+→ `continue` → skip this item.
+No change in result or w.
+
+---
+
+### Step 2️⃣ → i = 2
+
+Current item → `weight=3, value=4`
+
+Now:
+
+* result = 7
+* w = 5
+
+Check:
+
+```
+dp[i-1][w] = dp[1][5] = 3
+```
+
+Compare:
+
+```
+result == dp[1][5] → 7 == 3 ❌ False
+```
+
+➡️ Means: removing this item reduces the total value,
+so **this item was included**.
+
+✅ Print:
+
+```
+Item(weight=3, value=4)
+```
+
+Now update:
+
+```
+result = 7 - 4 = 3
+w = 5 - 3 = 2
+```
+
+---
+
+### Step 3️⃣ → i = 1
+
+Current item → `weight=2, value=3`
+
+Now:
+
+* result = 3
+* w = 2
+
+Check:
+
+```
+dp[i-1][w] = dp[0][2] = 0
+```
+
+Compare:
+
+```
+result == dp[0][2] → 3 == 0 ❌ False
+```
+
+➡️ Item 1 was also **included**.
+
+✅ Print:
+
+```
+Item(weight=2, value=3)
+```
+
+Update:
+
+```
+result = 3 - 3 = 0
+w = 2 - 2 = 0
+```
+
+Now both result and w are 0 → done ✅
+
+---
+
+## 🎯 Final Output (Printed Items)
+
+```
+Item(weight=3, value=4)
+Item(weight=2, value=3)
+```
+
+These are the **selected items** in the optimal knapsack.
+
+---
+
+## 🧾 Summary Table of Backtracking
+
+| Step | i | Item (w, v) | result before | dp[i-1][w] | Decision | result after | w after |
+| ---- | - | ----------- | ------------- | ---------- | -------- | ------------ | ------- |
+| 1    | 3 | (4, 5)      | 7             | 7          | Skip     | 7            | 5       |
+| 2    | 2 | (3, 4)      | 7             | 3          | Take     | 3            | 2       |
+| 3    | 1 | (2, 3)      | 3             | 0          | Take     | 0            | 0       |
+
+---
+
+## 💡 Intuition
+
+* When `result == dp[i-1][w]`:
+  → item **was not used**
+
+* When `result != dp[i-1][w]`:
+  → item **was included**,
+  so subtract its `value` and reduce remaining `capacity`.
+
+---
+
+So in short:
+
+> The backtracking starts from the last cell and moves up.
+> If the total value changes when we move up, that means the current item was **used** to get that total.
+
+---
+
+Would you like me to show a **visual diagram** (arrows on the DP table showing how we move upward and pick items)? It’s super helpful to see how this backtracking path looks.
+
+
+
+
+
+
+
+
+
+Beautiful question again, Rohan 💪 —
+this is **exactly** where most people get confused when learning knapsack,
+so let’s go *slow and crystal clear* 👇
+
+---
+
+## 🧠 The main idea
+
+At the end, the DP table (`dp`) tells us:
+
+* For every item and capacity, what **maximum total value** can be achieved.
+
+Now, during **backtracking**, we look at these DP values and ask:
+
+> “Did this item actually help in getting that best total value — or not?”
+
+If it did → **item was used**
+If it didn’t → **item was not used**
+
+---
+
+## ⚙️ Step-by-step logic behind the check
+
+We start from bottom-right cell:
+`dp[n][capacity]` → the *maximum value possible* with all items and full capacity.
+
+Now we go upwards (i = n → 1), and for each item, we check:
+
+```python
+if result == dp[i-1][w]:
+    continue   # item was NOT used
+else:
+    # item was USED
+```
+
+Let’s understand *why* 👇
+
+---
+
+### 🧱 Case 1: If `result == dp[i-1][w]`
+
+* `result` = current total value (`dp[i][w]`)
+* `dp[i-1][w]` = best value *without* using current item (previous row)
+
+If both are **equal**, that means:
+
+> Even without this item, the total value would’ve been the same.
+
+💬 So this item didn’t contribute anything new →
+✅ Item **was NOT used** in the optimal solution.
+
+We just skip (`continue`).
+
+---
+
+### 🧱 Case 2: If `result != dp[i-1][w]`
+
+That means:
+
+> When we remove this item, the total value **drops**.
+
+So the current item **was responsible** for that extra value.
+
+💬 Therefore:
+✅ Item **WAS used**.
+
+Then we:
+
+* Print it
+* Subtract its `value` (because we’ve now counted it)
+* Subtract its `weight` (because capacity reduces)
+
+---
+
+## 🧩 Let’s visualize with our example
+
+| Item | Weight | Value |
+| ---- | ------ | ----- |
+| 1    | 2      | 3     |
+| 2    | 3      | 4     |
+| 3    | 4      | 5     |
+
+Final DP value → `dp[3][5] = 7`
+
+---
+
+### Step-by-step backtracking
+
+#### 🔹 i = 3
+
+`result = 7, w = 5`
+
+Check:
+`dp[i-1][w] = dp[2][5] = 7`
+→ both are **same**
+
+✅ Not used
+(because even without item 3, value = 7)
+
+---
+
+#### 🔹 i = 2
+
+Now check:
+`dp[i-1][w] = dp[1][5] = 3`
+`result = 7` → not equal
+
+❌ Values differ → item 2 helped increase total value
+✅ So item 2 **was used**
+
+We update:
+
+```
+result = 7 - 4 = 3
+w = 5 - 3 = 2
+```
+
+---
+
+#### 🔹 i = 1
+
+Check:
+`dp[i-1][w] = dp[0][2] = 0`
+`result = 3` → not equal
+
+❌ Values differ → item 1 **was used**
+
+Update:
+
+```
+result = 3 - 3 = 0
+w = 2 - 2 = 0
+```
+
+Done ✅
+
+---
+
+## 🔑 Intuition summary
+
+| Condition              | Meaning                                 | Action     |
+| ---------------------- | --------------------------------------- | ---------- |
+| `result == dp[i-1][w]` | Same value without this item → not used | Skip it    |
+| `result != dp[i-1][w]` | Removing it lowers total → it was used  | Include it |
+
+---
+
+## 🧠 Simple way to remember
+
+> “If removing the item doesn’t hurt your value —
+> it wasn’t helping anyway.”
+
+That’s the entire logic behind deciding if an item was used.
+
+---
+
+Would you like me to **visually mark** the DP table (like highlight the cells that show “used” vs “not used” items for this example)?
+It’s super easy to see the pattern that way.
+
+
+
+
+
+
+
+
